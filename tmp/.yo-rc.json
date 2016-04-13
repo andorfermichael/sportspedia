@@ -1,0 +1,14 @@
+{
+  "test": {
+    "name": "sportspedia",
+    "description": "information about sports with sparql",
+    "title": "sportspedia",
+    "author": "Vera Karl <verakarl@c78-104-171-52.fh-salzburg.ac.at>",
+    "license": "MIT",
+    "main": "app/index.html",
+    "engine": [
+      "^5.0.0",
+      "^3.0.0"
+    ]
+  }
+}
