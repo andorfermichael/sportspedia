@@ -1,6 +1,6 @@
 # Project Goal
 
-Project which displays dbpedia information about sports in a meaningful way.
+Displays dbpedia information about sports in a meaningful way.
 
 # Setup
 
