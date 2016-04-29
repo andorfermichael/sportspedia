@@ -10,5 +10,3 @@ dps
   .then(r => { /* handle success */})
   .catch(e => { /* handle error */});
 
-
-//$('h1').html('Hello, World!')
