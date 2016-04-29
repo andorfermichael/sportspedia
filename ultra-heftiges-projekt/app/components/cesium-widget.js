@@ -7,15 +7,23 @@ export default Ember.Component.extend({
     var options = {
       fullscreenButton: false,
       homeButton: false,
-      infoBox: false,
       seneModePicker: false,
-      selectionIndicator: false,
       timeline: false,
       navigationHelpButton: false,
       navigationInstructionsInitiallyVisible: false
     };
     var viewer = new Cesium.Viewer('cesiumContainer',options);
     var scene = viewer.scene;
+    var pinBuilder = new Cesium.PinBuilder();
+    var infoBox = new Cesium.InfoBox('cesiumInfoContainer');
+
+  function toggleInfoBox(){
+    if ($('#cesiumInfoContainer').css('visibility') == "visible")
+      $('#cesiumInfoContainer').css('visibility','hidden');
+    else
+      $('#cesiumInfoContainer').css('visibility','visible');
+  }
+
     //var clock = viewer.clock;
     var currentposition = {
         //Salzburg as default
@@ -82,14 +90,107 @@ export default Ember.Component.extend({
   toggleControls(false);
   hideElements();
 
+  /*$(function() {
+    $( "#draggable" ).draggable();
+  });
+*/
   $('#start-button').click(function(){
     morph("2D");
     $('main').toggle();
     toggleControls(true);
     setTimeout(function(){
-      setView(currentposition,50000);
+      //setView(currentposition,50000);
+      var entityArray = new Array();
+      entityArray.push({
+        name: "Red Bull Arena Salzburg",
+        description: "Das ist Mike's Lieblingsarena",
+        coords: {
+          latitude: 47.8163445,
+          longitude: 12.9981943
+        }
+      });
+      entityArray.push({
+        name: "Eisarena Salzburg",
+        coords: {
+          latitude: 47.797731,
+          longitude: 13.059888
+        }
+      });
+
+      zoomToPins(
+        createMultiplePins(entityArray)
+      );
+
+      //toggleInfoBox();
     },4000);
+
   })
 
+  //PINS
+  function createSinglePin(entity,pin_img = 'Assets/Textures/maki/marker-stroked.png'){
+    /*
+    entity Element expected in JSON with following structure
+     var entity = {
+       name: "this is the stadium name",
+       desctiption: "this is the stadium description",
+       otherattributes: "and much more",
+       image: "external image url",
+       coords: {
+         longitude: 12.9922660309,
+         latitude: 47.8097550943
+       }
+     }
+    }
+     */
+    var url = Cesium.buildModuleUrl(pin_img);
+    var Pin = Cesium.when(pinBuilder.fromUrl(url, Cesium.Color.WHITE, 48), function(canvas) {
+      return viewer.entities.add({
+        name : entity.name,
+        //47.8097550943 12.9922660309
+        position : Cesium.Cartesian3.fromDegrees(entity.coords.longitude,entity.coords.latitude),
+        billboard : {
+          image : canvas.toDataURL(),
+          verticalOrigin : Cesium.VerticalOrigin.BOTTOM
+        },
+        point: {
+          pixelSize: 5,
+          color:  Cesium.Color.RED,
+          outlineColor: Cesium.Color.WHITE,
+          outlineWidth: 2
+        },
+        label:  {
+          text : entity.name,
+          font : '14pt monospace',
+          style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+          outlineWidth : 2,
+          verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+          pixelOffset : new Cesium.Cartesian2(0, 20)
+        }
+      });
+    });
+    return Pin;
   }
+
+  function createMultiplePins(entityArray){
+    //See createSinglePin function for reference of the structure of entity
+    var PinCollection = new Array();
+    for (var i = 0; i < entityArray.length; i++) {
+        var Entity = createSinglePin(entityArray[i]);
+        Entity.description = entityArray[i].description;
+        PinCollection.push(Entity);
+      };
+    return PinCollection;
+  }
+
+  function zoomToPins(pinsarray){
+    //Since some of the pins are created asynchronously, wait for them all to load before zooming/
+    Cesium.when.all(pinsarray, function(pins){
+      viewer.flyTo(pins);
+    });
+  }
+
+
+
+
+}
 });
