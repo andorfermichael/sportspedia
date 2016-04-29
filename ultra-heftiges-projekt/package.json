@@ -21,8 +21,10 @@
   "devDependencies": {
     "broccoli-asset-rev": "^2.2.0",
     "broccoli-funnel": "^1.0.1",
+    "dbpedia-sparql-client": "^0.8.5",
     "ember-ajax": "0.7.1",
     "ember-bootstrap": "0.6.4",
+    "ember-browserify": "^1.1.8",
     "ember-carousel": "0.0.2",
     "ember-cli": "2.4.2",
     "ember-cli-app-version": "^1.0.0",
