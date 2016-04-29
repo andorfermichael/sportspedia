@@ -1,7 +1,7 @@
 import Ember from 'ember';
 import $ from 'jquery';
-import dps from 'npm:dbpedia-sparql-client';
-//import Cesium from 'Cesium/cesium';
+//import dps from 'npm:dbpedia-sparql-client';
+import Cesium from 'vendor/cesium/Cesium';
 
 export default Ember.Component.extend({
   didRender() {
@@ -16,14 +16,6 @@ export default Ember.Component.extend({
     var viewer = new Cesium.Viewer('cesiumContainer',options);
     var scene = viewer.scene;
     var pinBuilder = new Cesium.PinBuilder();
-    var infoBox = new Cesium.InfoBox('cesiumInfoContainer');
-
-  function toggleInfoBox(){
-    if ($('#cesiumInfoContainer').css('visibility') == "visible")
-      $('#cesiumInfoContainer').css('visibility','hidden');
-    else
-      $('#cesiumInfoContainer').css('visibility','visible');
-  }
 
     //var clock = viewer.clock;
     var currentposition = {
@@ -33,11 +25,18 @@ export default Ember.Component.extend({
     };
 
   function morph(target_projection){
-    if (target_projection == "2D") scene.morphTo2D();
-    else if (target_projection == "3D") scene.morphTo3D();
-    else if (target_projection == "Columbus") scene.morphToColumbusView();
+    if (target_projection === "2D"){
+      scene.morphTo2D();
+    }
+    else if (target_projection === "3D"){
+      scene.morphTo3D();
+    }
+    else if (target_projection === "Columbus"){
+      scene.morphToColumbusView();
+    }
   }
 
+  /*
   function spinGlobe(dynamicRate){
     var previousTime = Date.now();
     viewer.clock.onTick.addEventListener(function() {
@@ -48,7 +47,8 @@ export default Ember.Component.extend({
       viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
     });
   }
-
+*/
+  
   function toggleControls(option){
     scene.screenSpaceCameraController.enableRotate = option;
     scene.screenSpaceCameraController.enableTranslate = option;
@@ -101,7 +101,7 @@ export default Ember.Component.extend({
     toggleControls(true);
     setTimeout(function(){
       //setView(currentposition,50000);
-      var entityArray = new Array();
+      var entityArray = [];
       entityArray.push({
         name: "Red Bull Arena Salzburg",
         description: "Das ist Mike's Lieblingsarena",
@@ -125,7 +125,7 @@ export default Ember.Component.extend({
       //toggleInfoBox();
     },4000);
 
-  })
+  });
 
   //PINS
   function createSinglePin(entity,pin_img = 'Assets/Textures/maki/marker-stroked.png'){
@@ -174,12 +174,12 @@ export default Ember.Component.extend({
 
   function createMultiplePins(entityArray){
     //See createSinglePin function for reference of the structure of entity
-    var PinCollection = new Array();
+    var PinCollection = [];
     for (var i = 0; i < entityArray.length; i++) {
         var Entity = createSinglePin(entityArray[i]);
         Entity.description = entityArray[i].description;
         PinCollection.push(Entity);
-      };
+      }
     return PinCollection;
   }
 
