@@ -19,11 +19,8 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "bluebird": "^3.3.5",
     "broccoli-asset-rev": "^2.2.0",
     "broccoli-funnel": "^1.0.1",
-    "cls-bluebird": "^1.0.1",
-    "dbpedia-sparql-client": "^0.8.5",
     "ember-ajax": "0.7.1",
     "ember-bootstrap": "0.6.4",
     "ember-browserify": "^1.1.8",
