@@ -147,6 +147,7 @@ export default Ember.Component.extend({
     var Pin = Cesium.when(pinBuilder.fromUrl(url, Cesium.Color.WHITE, 48), function(canvas) {
       return viewer.entities.add({
         name : entity.name,
+        description : entity.description,
         //47.8097550943 12.9922660309
         position : Cesium.Cartesian3.fromDegrees(entity.coords.longitude,entity.coords.latitude),
         billboard : {
