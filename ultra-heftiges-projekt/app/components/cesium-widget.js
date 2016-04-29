@@ -218,12 +218,9 @@ export default Ember.Component.extend({
       .query(querySportsstadium)
       .timeout(15000) // optional, defaults to 10000
       .asJson()       // or asXml()
-      .then(r => { console.log(querySportsstadium)})
-.catch(e => { console.log("the query can not be fulfilled")});
+      .then(r => { console.log(querySportsstadium);})
+.catch(e => { console.log("the query can not be fulfilled");});
   }
-
-
-
 
 }
 });
