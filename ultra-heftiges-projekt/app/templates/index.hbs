@@ -1,0 +1,55 @@
+{{#cesium-widget}}
+{{/cesium-widget}}
+<main>
+    <content>
+        <h1>Welcome to your Social Journey</h1>
+{{#carousel-container transition-interval=400 on-slide=[ index: 2, previousIndex: 1, direction: 'right' ]}}
+  {{#carousel-body}}
+    {{#carousel-item}}
+            <form class="color-primary-2">
+                <h2 class="form-signin-heading">Sign in</h2>
+                <small>Connect Social Journey with facebook to start your virtual trip:</small>
+                <br><br>
+                <div class="row">
+                  {{#if toriiSession.isAuthenticated}}
+                      <div class="col-lg-12 col-md-12 col-sm-12 social-col">
+                          <h3>Welcome {{toriiSession.user.name}}!</h3>
+                          <a {{action 'logout'}}id="facebook-logout" class="btn btn-primary social-login-btn social-facebook"><i class="fa fa-facebook fa-5x"><b>Logout</b></i></a>
+                      </div>
+                  {{else if toriiSession.isWorking}}
+                      <div class="col-lg-12 col-md-12 col-sm-12 social-col">
+                          <h4>Login in progress...</h4>
+                      </div>
+                  {{else}}
+                      <div class="col-lg-12 col-md-12 col-sm-12 social-col">
+                          <a {{action 'login' 'facebook-oauth2'}}id="facebook-login" class="btn btn-primary social-login-btn social-facebook"><i class="fa fa-facebook fa-5x"></i></a>
+                      </div>
+                  {{/if}}
+                </div>
+            </form>
+            <br>
+      {{#carousel-arrow direction="right"}}
+              <small><a class="non-social-control color-primary-4" data-page="1">I don't have a facebook account in use :(</a></small>
+      {{/carousel-arrow}}
+    {{/carousel-item}}
+    {{#carousel-item}}
+            <div class="info-box">
+                <h3>Why we don't support regular registration & login:</h3>
+                <p>If you do not have an account at facebook, unfortunately you won't be able to use our services.</p>
+                <p>The reason for that is simple, all neccessary data for our service is delivered by your facebook activity.<br>
+                   Our service isn't meant to collect and save data, we only display data interactively you already have shared with facebook.
+                    You can revoke permissions at all time, or completely remove our App from accessing your social media account after usage if you'd like to.</p>
+                <br>
+            </div>
+      {{#carousel-arrow direction="left"}}
+            <small><a class="non-social-control color-primary-4" data-page="0">Back to the login</a></small>
+      {{/carousel-arrow}}
+    {{/carousel-item}}
+        <br>
+        <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
+        <br class="clear" />
+  {{/carousel-body}}
+{{/carousel-container}}
+    </content>
+</main>
+{{outlet}}
