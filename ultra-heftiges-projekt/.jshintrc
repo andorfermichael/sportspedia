@@ -4,7 +4,7 @@
     "window",
     "-Promise",
     "Cesium",
-    "sparql-client"
+    "SparqlClient"
   ],
   "browser": true,
   "boss": true,
