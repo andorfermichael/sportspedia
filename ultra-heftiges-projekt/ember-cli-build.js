@@ -12,6 +12,7 @@ module.exports = function(defaults) {
 
   app.import('vendor/cesium/Cesium/Cesium.js')
   app.import('vendor/cesium/Cesium/Widgets/widgets.css')
+  app.import('vendor/sparql-client/sparql-client.js')
 
   // Use `app.import` to add additional libraries to the generated
   // output files.
