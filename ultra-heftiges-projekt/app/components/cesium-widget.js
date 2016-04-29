@@ -1,29 +1,22 @@
 import Ember from 'ember';
 import $ from 'jquery';
-import dps from 'npm:dbpedia-sparql-client';
-//import Cesium from 'Cesium/cesium';
+//import dps from 'npm:dbpedia-sparql-client';
+//import Cesium from 'vendor/cesium/Cesium';
 
 export default Ember.Component.extend({
   didRender() {
     var options = {
       fullscreenButton: false,
       homeButton: false,
-      seneModePicker: false,
+      sceneModePicker: false,
+      geocoder: false,
       timeline: false,
-      navigationHelpButton: false,
-      navigationInstructionsInitiallyVisible: false
+      navigationInstructionsInitiallyVisible: false,
+      baseLayerPicker : false
     };
     var viewer = new Cesium.Viewer('cesiumContainer',options);
     var scene = viewer.scene;
     var pinBuilder = new Cesium.PinBuilder();
-    var infoBox = new Cesium.InfoBox('cesiumInfoContainer');
-
-  function toggleInfoBox(){
-    if ($('#cesiumInfoContainer').css('visibility') == "visible")
-      $('#cesiumInfoContainer').css('visibility','hidden');
-    else
-      $('#cesiumInfoContainer').css('visibility','visible');
-  }
 
     //var clock = viewer.clock;
     var currentposition = {
@@ -33,11 +26,18 @@ export default Ember.Component.extend({
     };
 
   function morph(target_projection){
-    if (target_projection == "2D") scene.morphTo2D();
-    else if (target_projection == "3D") scene.morphTo3D();
-    else if (target_projection == "Columbus") scene.morphToColumbusView();
+    if (target_projection === "2D"){
+      scene.morphTo2D();
+    }
+    else if (target_projection === "3D"){
+      scene.morphTo3D();
+    }
+    else if (target_projection === "Columbus"){
+      scene.morphToColumbusView();
+    }
   }
 
+  /*
   function spinGlobe(dynamicRate){
     var previousTime = Date.now();
     viewer.clock.onTick.addEventListener(function() {
@@ -48,6 +48,7 @@ export default Ember.Component.extend({
       viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
     });
   }
+*/
 
   function toggleControls(option){
     scene.screenSpaceCameraController.enableRotate = option;
@@ -101,10 +102,10 @@ export default Ember.Component.extend({
     toggleControls(true);
     setTimeout(function(){
       //setView(currentposition,50000);
-      var entityArray = new Array();
+      var entityArray = [];
       entityArray.push({
         name: "Red Bull Arena Salzburg",
-        description: "Das ist Mike's Lieblingsarena",
+        description: "Die Red Bull Arena ist ein österreichisches Fußballstadion am Stadtrand von Salzburg, in der Gemeinde Wals-Siezenheim. Es ist Heimstadion des Bundesligisten FC Red Bull Salzburg sowie des Erstligisten FC Liefering und fasst insgesamt 30.180[2] Zuschauer. Bis nach der Fußball-Europameisterschaft 2008, bei der das Stadion eines der vier Austragungsorte in Österreich war, hieß es EM-Stadion Wals-Siezenheim.",
         coords: {
           latitude: 47.8163445,
           longitude: 12.9981943
@@ -112,6 +113,7 @@ export default Ember.Component.extend({
       });
       entityArray.push({
         name: "Eisarena Salzburg",
+        description: "Das ist Mike's Lieblingsarena",
         coords: {
           latitude: 47.797731,
           longitude: 13.059888
@@ -125,7 +127,7 @@ export default Ember.Component.extend({
       //toggleInfoBox();
     },4000);
 
-  })
+  });
 
   //PINS
   function createSinglePin(entity,pin_img = 'Assets/Textures/maki/marker-stroked.png'){
@@ -147,6 +149,7 @@ export default Ember.Component.extend({
     var Pin = Cesium.when(pinBuilder.fromUrl(url, Cesium.Color.WHITE, 48), function(canvas) {
       return viewer.entities.add({
         name : entity.name,
+        description : entity.description,
         //47.8097550943 12.9922660309
         position : Cesium.Cartesian3.fromDegrees(entity.coords.longitude,entity.coords.latitude),
         billboard : {
@@ -174,12 +177,10 @@ export default Ember.Component.extend({
 
   function createMultiplePins(entityArray){
     //See createSinglePin function for reference of the structure of entity
-    var PinCollection = new Array();
+    var PinCollection = [];
     for (var i = 0; i < entityArray.length; i++) {
-        var Entity = createSinglePin(entityArray[i]);
-        Entity.description = entityArray[i].description;
-        PinCollection.push(Entity);
-      };
+        PinCollection.push(createSinglePin(entityArray[i]));
+      }
     return PinCollection;
   }
 
