@@ -1,6 +1,6 @@
 import Ember from 'ember';
 import $ from 'jquery';
-import dps from 'dbpedia-sparql-client';
+import dps from 'npm:dbpedia-sparql-client';
 //import Cesium from 'Cesium/cesium';
 
 export default Ember.Component.extend({
