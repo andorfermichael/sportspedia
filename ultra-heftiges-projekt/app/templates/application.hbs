@@ -9,10 +9,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-                <a class="navbar-brand" href="#">
-                    <img alt="Brand" src="...">
-                </a>
-                {{ link-to 'Social Journey' 'index' class="navbar-brand" }}
+            <i class="fa fa-futbol-o" aria-hidden="true"></i>{{ link-to 'Sportspedia' 'index' class="navbar-brand" }}
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-collapse-1">
@@ -21,15 +18,6 @@
                 <li>{{ link-to 'About' 'about' }}</li>
                 <li>{{ link-to 'Contact' 'contact' }}</li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-            {{#if toriiSession.isAuthenticated}}
-                <li id="navbar-right">Welcome,{{toriiSession.user.name}} | <a href="#" {{action 'logout'}}>Logout</a></li>
-            {{else if toriiSession.isWorking}}
-                <li id="navbar-right"><a href="#">Logging in ...</a></li>
-            {{else}}
-                <li id="navbar-right"><a href="#" {{action 'login' 'facebook-oauth2'}}>Connect with Facebook</a></li>
-            {{/if}}
-                </ul>
         </div>
         <!-- /.navbar-collapse -->
     </div>

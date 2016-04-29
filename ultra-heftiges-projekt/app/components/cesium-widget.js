@@ -12,12 +12,22 @@ export default Ember.Component.extend({
       selectionIndicator: false,
       timeline: false,
       navigationHelpButton: false,
-      navigationInstructionsInitiallyVisible: false,
-      scene3DOnly: true
+      navigationInstructionsInitiallyVisible: false
     };
     var viewer = new Cesium.Viewer('cesiumContainer',options);
     var scene = viewer.scene;
     //var clock = viewer.clock;
+    var currentposition = {
+        //Salzburg as default
+        latitude: 47.8,
+        longitude: 13.0333333
+    };
+
+  function morph(target_projection){
+    if (target_projection == "2D") scene.morphTo2D();
+    else if (target_projection == "3D") scene.morphTo3D();
+    else if (target_projection == "Columbus") scene.morphToColumbusView();
+  }
 
   function spinGlobe(dynamicRate){
     var previousTime = Date.now();
@@ -30,12 +40,12 @@ export default Ember.Component.extend({
     });
   }
 
-  function disableControls(){
-    scene.screenSpaceCameraController.enableRotate = false;
-    scene.screenSpaceCameraController.enableTranslate = false;
-    scene.screenSpaceCameraController.enableZoom = false;
-    scene.screenSpaceCameraController.enableTilt = false;
-    scene.screenSpaceCameraController.enableLook = false;
+  function toggleControls(option){
+    scene.screenSpaceCameraController.enableRotate = option;
+    scene.screenSpaceCameraController.enableTranslate = option;
+    scene.screenSpaceCameraController.enableZoom = option;
+    scene.screenSpaceCameraController.enableTilt = option;
+    scene.screenSpaceCameraController.enableLook = option;
   }
 
   function hideElements(){
@@ -43,37 +53,43 @@ export default Ember.Component.extend({
     $('.cesium-widget-credits').toggle();
   }
 
-  function setView(position){
+  function setView(target = currentposition,height = 3939999.0){
     // to Salzburg
     //viewer.camera.lookAt(center, new Cesium.Cartesian3(0.0, -4790000.0, 3930000.0));
     //var center = Cesium.Cartesian3.fromDegrees(13.0333333, 47.8, 3930000.0);
-    var center = Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 3939999.0);
+    var center = Cesium.Cartesian3.fromDegrees(target.longitude, target.latitude, height);
     viewer.camera.flyTo({
-      destination : center,
-      options: {
-        duration: 12.0
-      }
+      destination : center
     });
   }
 
   function getLocation() {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(setView);
-    } else {
-      setView({
-        coords: {
-          latitude: 47.8,
-          longitude: 13.0333333
-        }
+      navigator.geolocation.getCurrentPosition(function(position){
+        currentposition = {
+          longitude: position.coords.longitude,
+          latitude: position.coords.latitude
+        };
       });
     }
   }
-  spinGlobe(0.01);
+
+  //spinGlobe(0.01);
   setTimeout(function(){
     getLocation();
-  },5000);
-  disableControls();
+    setView();
+  },3000);
+  toggleControls(false);
   hideElements();
+
+  $('#start-button').click(function(){
+    morph("2D");
+    $('main').toggle();
+    toggleControls(true);
+    setTimeout(function(){
+      setView(currentposition,50000);
+    },4000);
+  })
 
   }
 });
