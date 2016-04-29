@@ -1,9 +1,5 @@
-import $ from 'jquery'
 import dps from 'dbpedia-sparql-client';
-const querySportsstadium = `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> 
-PREFIX onto: <http://dbpedia.org/ontology/> 
-
-SELECT * WHERE {
+const querySportsstadium = `SELECT * WHERE {
   ?s a onto:SportFacility .
   ?s geo:lat ?lat .
   ?s geo:long ?long .
