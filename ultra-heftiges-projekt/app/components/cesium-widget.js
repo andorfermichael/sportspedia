@@ -213,7 +213,7 @@ export default Ember.Component.extend({
       '?s geo:long ?long .' +
       'FILTER ( ?long > 13.033229 - 0.1 && ?long < 13.033229 + 0.1 && ?lat > 47.811195 - 0.1 && ?lat < 47.811195 + 0.1 )}';
 
-    SparqlClient
+   new SparqlClient
       .client()
       .query(querySportsstadium)
       .timeout(15000) // optional, defaults to 10000
