@@ -1,13 +1,17 @@
-# system
-.DS_Sytem
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
-# IDE
-.idea/
+# compiled output
+/dist
+/tmp
 
-# deps
-node_modules/
+# dependencies
+/node_modules
+/bower_components
 
-# build
-dist/
-tmp
-.sass-cache
+# misc
+/.sass-cache
+/connect.lock
+/coverage/*
+/libpeerconnection.log
+npm-debug.log
+testem.log
