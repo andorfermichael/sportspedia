@@ -1,4 +1,4 @@
-# Social Journey
+# Sportspedia
 
 This README outlines the details of collaborating on this Ember application.
 Social Journey is a web application which visualizes the posts of a user’s friends on a map. The map does not show all post, but those tagged with a location. With Social Journey a user is able to follow not only his or her own travel destinations but also all travel destinations of his or her friends ordered by the timestamps. Aditionally, the content of the posts are visualized in a beautiful way, for example, photos or videos.
