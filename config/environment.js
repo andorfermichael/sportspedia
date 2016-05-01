@@ -2,7 +2,7 @@
 
 module.exports = function(environment) {
   var ENV = {
-    modulePrefix: 'michael-andorfer-nico-deufemia-mmp2b-socialjourney',
+    modulePrefix: 'sportspedia',
     environment: environment,
     baseURL: '/',
     locationType: 'auto',

@@ -1,5 +1,5 @@
 {
-  "name": "michael-andorfer-nico-deufemia-mmp2b-socialjourney",
+  "name": "sportspedia",
   "dependencies": {
     "ember": "~2.4.1",
     "ember-cli-shims": "0.1.0",
