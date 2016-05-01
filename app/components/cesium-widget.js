@@ -37,18 +37,18 @@ export default Ember.Component.extend({
       }
     }
 
-  /*
-  function spinGlobe(dynamicRate){
-    var previousTime = Date.now();
-    viewer.clock.onTick.addEventListener(function() {
-      var spinRate = dynamicRate;
-      var currentTime = Date.now();
-      var delta = ( currentTime - previousTime ) / 1000;
-      previousTime = currentTime;
-      viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
-    });
-  }
-*/
+    /*
+    function spinGlobe(dynamicRate){
+      var previousTime = Date.now();
+      viewer.clock.onTick.addEventListener(function() {
+        var spinRate = dynamicRate;
+        var currentTime = Date.now();
+        var delta = ( currentTime - previousTime ) / 1000;
+        previousTime = currentTime;
+        viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
+      });
+    }
+  */
 
     function toggleControls(option){
       scene.screenSpaceCameraController.enableRotate = option;
@@ -63,7 +63,7 @@ export default Ember.Component.extend({
       $('.cesium-widget-credits').toggle();
     }
 
-    function setView(target = currentposition,height = 3939999.0){
+    function setView(target = currentposition, height = 3939999.0){
       // to Salzburg
       //viewer.camera.lookAt(center, new Cesium.Cartesian3(0.0, -4790000.0, 3930000.0));
       //var center = Cesium.Cartesian3.fromDegrees(13.0333333, 47.8, 3930000.0);
@@ -100,26 +100,30 @@ export default Ember.Component.extend({
       morph("2D");
       $('main').toggle();
       toggleControls(true);
+
+        var entityArray = [];
+
+        // Get sports facilities as promise
+        var sportsFacilities = getSportsFacilities(currentposition);
+
+        // Resolve promise
+        sportsFacilities.then(function(data) {
+          var facilities = data.results.bindings
+          
+          for (let entity of facilities) {
+            entityArray.push({
+                name: entity.s.value,
+                description: "Here goes the desciption from dbpedia",
+                coords: {
+                latitude: parseFloat(entity.lat.value),
+                longitude: parseFloat(entity.long.value)
+              }
+            });
+          }
+        });
+
       setTimeout(function(){
         setView(currentposition,50000);
-        getData();
-        var entityArray = [];
-        entityArray.push({
-          name: "Red Bull Arena Salzburg",
-          description: "Die Red Bull Arena ist ein österreichisches Fußballstadion am Stadtrand von Salzburg, in der Gemeinde Wals-Siezenheim. Es ist Heimstadion des Bundesligisten FC Red Bull Salzburg sowie des Erstligisten FC Liefering und fasst insgesamt 30.180[2] Zuschauer. Bis nach der Fußball-Europameisterschaft 2008, bei der das Stadion eines der vier Austragungsorte in Österreich war, hieß es EM-Stadion Wals-Siezenheim.",
-          coords: {
-            latitude: 47.8163445,
-            longitude: 12.9981943
-          }
-        });
-        entityArray.push({
-          name: "Eisarena Salzburg",
-          description: "Das ist Mike's Lieblingsarena",
-          coords: {
-            latitude: 47.797731,
-            longitude: 13.059888
-          }
-        });
 
         zoomToPins(
           createMultiplePins(entityArray)
@@ -192,8 +196,29 @@ export default Ember.Component.extend({
       });
     }
 
-    function getData(){
-   
+    function getSportsFacilities(currentPosition){
+
+      var radius = 0.3
+
+      // Create sparql query used for fetching sports facilities around current location
+      var sportsFacilitiesQuery =
+        `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+         PREFIX onto: <http://dbpedia.org/ontology/>
+         SELECT * WHERE {
+           ?s a onto:SportFacility .
+           ?s geo:lat ?lat .
+           ?s geo:long ?long .
+           FILTER ( ?long > ${currentPosition.longitude} - ${radius} && ?long < ${currentPosition.longitude} + ${radius} &&
+                    ?lat > ${currentPosition.latitude} - ${radius} && ?lat < ${currentPosition.latitude} + ${radius} 
+                  )
+         }`
+
+      // Return promise which fetches sports facilities from dbpedia
+      return dps
+        .client()
+        .query(sportsFacilitiesQuery)
+        .asJson()
+        .catch(e => console.error(e))
     }
   }
 });
