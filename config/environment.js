@@ -12,35 +12,10 @@ module.exports = function(environment) {
         // e.g. 'with-controller': true
       }
     },
-    torii: {
-      sessionServiceName: 'toriiSession',
-      providers: {
-        'facebook-oauth2': {
-          apiKey: '188171371199457',
-          scope: 'read_stream,user_posts',
-          redirectUri: 'http://localhost:4200/world'
-        }
-      }
-    },
-    contentSecurityPolicy: {
-      'default-src': "'none'",
-      'script-src': "'self' 'unsafe-inline' 'unsafe-eval'",
-      'font-src': "'self'",
-      'connect-src': "'self'",
-      'img-src': "'self'",
-      'report-uri':"'localhost'",
-      'style-src': "'self' 'unsafe-inline'",
-      'frame-src': "'none'"
-    },
+    
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-    },
-    FB: {
-      appId: '188171371199457',
-      version: 'v2.3',
-      scope: 'read_stream,user_posts',
-      xfbml: true
     }
   };
 
