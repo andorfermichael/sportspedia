@@ -16,6 +16,7 @@ export default Ember.Component.extend({
     };
     var viewer = new Cesium.Viewer('cesiumContainer',options);
     var scene = viewer.scene;
+    var camera = new Cesium.Camera(scene);
     var pinBuilder = new Cesium.PinBuilder();
 
     //var clock = viewer.clock;
@@ -108,8 +109,8 @@ export default Ember.Component.extend({
 
         // Resolve promise
         sportsFacilities.then(function(data){
-          var facilities = data.results.bindings
-          
+          var facilities = data.results.bindings;
+
           for (let entity of facilities) {
             // Get sports facilities details as promise
             /*var detailInformationOfSportsFacility = getDetailInformationOfSportsFacility(entity.s.value);
@@ -208,8 +209,9 @@ export default Ember.Component.extend({
     }
 
     function getSportsFacilities(currentPosition){
-      var radius = 0.3
-
+      var radius = 0.3;
+      var cameraPosition = camera.positionCartographic;
+      console.log("###Height of camera: " + cameraPosition.height);
       // Create sparql query used for fetching sports facilities around current location
       var sportsFacilitiesQuery =
         `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -219,35 +221,35 @@ export default Ember.Component.extend({
            ?s geo:lat ?lat .
            ?s geo:long ?long .
            FILTER ( ?long > ${currentPosition.longitude} - ${radius} && ?long < ${currentPosition.longitude} + ${radius} &&
-                    ?lat > ${currentPosition.latitude} - ${radius} && ?lat < ${currentPosition.latitude} + ${radius} 
+                    ?lat > ${currentPosition.latitude} - ${radius} && ?lat < ${currentPosition.latitude} + ${radius}
                   )
-         }`
+         }`;
 
       // Return promise which fetches sports facilities from dbpedia
       return dps
         .client()
         .query(sportsFacilitiesQuery)
         .asJson()
-        .catch(e => console.error(e))
+        .catch(e => console.error(e));
     }
 
     function getDetailInformationOfSportsFacility(uri){
-      var identifier = uri.substr(uri.lastIndexOf('/') + 1)
+      var identifier = uri.substr(uri.lastIndexOf('/') + 1);
 
       // Create sparql query used for fetching sports facilities around current location
       var detailInformationQuery =
         `PREFIX dbpedia: <http://dbpedia.org/resource/>
-         SELECT * WHERE { 
+         SELECT * WHERE {
            dbpedia:${identifier} ?p ?o .
            filter ( isLiteral(?o) && langMatches(lang(?o),'en') )
-         }`
+         }`;
 
       // Return promise which fetches sports facilities from dbpedia
       return dps
         .client()
         .query(detailInformationQuery)
         .asJson()
-        .catch(e => console.error(e))
+        .catch(e => console.error(e));
     }
   }
 });
