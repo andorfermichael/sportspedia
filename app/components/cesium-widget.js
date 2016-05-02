@@ -41,6 +41,7 @@ export default Ember.Component.extend({
         var facilities = data.results.bindings;
         for (let entity of facilities){
           // Create entity and add it to array
+          if (entityArray.length === 100) break;
           entityArray.push({
             name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
             description: "Real description goes here", //detailInformation.abstract,
@@ -49,7 +50,7 @@ export default Ember.Component.extend({
               longitude: parseFloat(entity.long.value)
             }
           });
-          console.log(entity);
+          //console.log(entity);
         }
         createMultiplePins(entityArray);
       });
@@ -60,7 +61,8 @@ export default Ember.Component.extend({
     var currentposition = {
         //Salzburg as default
         latitude: 47.8,
-        longitude: 13.0333333
+        longitude: 13.0333333,
+        height: 0
     };
 
     function morph(target_projection){
@@ -129,47 +131,11 @@ export default Ember.Component.extend({
     },3000);
     toggleControls(false);
     hideElements();
-
-    /*$(function() {
-      $( "#draggable" ).draggable();
-    });
-    */
+  
     $('#start-button').click(function(){
       morph("2D");
       $('main').toggle();
       toggleControls(true);
-
-        var entityArray = [];
-
-        // Get sports facilities as promise
-        var sportsFacilities = getSportsFacilities(currentposition);
-
-        // Resolve promise
-        sportsFacilities.then(function(data){
-          var facilities = data.results.bindings;
-
-          for (let entity of facilities) {
-            // Get sports facilities details as promise
-            /*var detailInformationOfSportsFacility = getDetailInformationOfSportsFacility(entity.s.value);
-
-            var detailInformation = null
-
-            // Resolve promise
-            detailInformationOfSportsFacility.then(function(data){
-              detailInformation = data.results.bindings
-            });*/
-
-              // Create entity and add it to array
-              entityArray.push({
-                name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
-                description: "Real description goes here", //detailInformation.abstract,
-                coords: {
-                  latitude: parseFloat(entity.lat.value),
-                  longitude: parseFloat(entity.long.value)
-                }
-            });
-          }
-        });
 
       setTimeout(function(){
         setView(currentposition,50000);
@@ -247,6 +213,11 @@ export default Ember.Component.extend({
 
     function getSportsFacilities(currentPosition){
       var radius = 0.3;
+      if (currentPosition.height !== 0){
+        radius = currentPosition.height * (0,13 / 3939999);
+      }
+      console.log("Height: " + currentPosition.height);
+      console.log("Radius: " + radius);
       // Create sparql query used for fetching sports facilities around current location
       var sportsFacilitiesQuery =
         `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
