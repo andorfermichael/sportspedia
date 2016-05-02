@@ -49,7 +49,6 @@ export default Ember.Component.extend({
               longitude: parseFloat(entity.long.value)
             }
           });
-          //console.log(entity);
         }
         createMultiplePins(entityArray);
       });
@@ -255,9 +254,10 @@ export default Ember.Component.extend({
            prefix dbpedia-owl: <http://dbpedia.org/ontology/>
 
           select ?abstract where { 
-            dbpedia:Ernest_Hemingway dbpedia-owl:abstract ?abstract .
+            dbpedia:Eisarena_Salzburg dbpedia-owl:abstract ?abstract .
             filter(langMatches(lang(?abstract),"de"))
           }`;
+         
 
       // Return promise which fetches sports facilities from dbpedia
       return dps
