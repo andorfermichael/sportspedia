@@ -231,18 +231,21 @@ export default Ember.Component.extend({
                     ?lat > ${currentPosition.latitude} - ${radius} && ?lat < ${currentPosition.latitude} + ${radius}
                   )
          }`;
-
+        console.log("sports"+sportsFacilitiesQuery);
       // Return promise which fetches sports facilities from dbpedia
       return dps
         .client()
         .query(sportsFacilitiesQuery)
         .asJson()
         .catch(e => console.error(e));
+
+
     }
 
     function getDetailInformationOfSportsFacility(uri){
       var identifier = uri.substr(uri.lastIndexOf('/') + 1);
-
+      console.log(identifier);
+      //console.log(identifier);
       // Create sparql query used for fetching sports facilities around current location
       var detailInformationQuery =
       /*  `PREFIX dbpedia: <http://dbpedia.org/resource/>
@@ -253,12 +256,10 @@ export default Ember.Component.extend({
          */
           `PREFIX  dbpedia: <http://dbpedia.org/resource/>
            PREFIX  onto: <http://dbpedia.org/ontology/>
-
           SELECT ?abstract WHERE { 
-            dbpedia:Eisarena_Salzburg onto:abstract ?abstract .
+            dbpedia:$identifier onto:abstract ?abstract .
             filter(langMatches(lang(?abstract), 'en'))
           }`;
-
       // Return promise which fetches sports facilities from dbpedia
       return dps
         .client()
@@ -266,5 +267,6 @@ export default Ember.Component.extend({
         .asJson()
         .catch(e => console.error(e));
     }
+    
   }
 });
