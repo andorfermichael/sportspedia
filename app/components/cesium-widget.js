@@ -9,7 +9,6 @@ export default Ember.Component.extend({
       fullscreenButton: false,
       homeButton: false,
       sceneModePicker: false,
-      geocoder: false,
       timeline: false,
       navigationInstructionsInitiallyVisible: false,
       baseLayerPicker : false
@@ -100,7 +99,7 @@ export default Ember.Component.extend({
 
     function hideElements(){
       $('.cesium-viewer-animationContainer').toggle();
-      $('.cesium-widget-credits').toggle();
+      //$('.cesium-widget-credits').toggle();
     }
 
     function setView(target = currentposition, height = 3939999.0){
@@ -131,7 +130,7 @@ export default Ember.Component.extend({
     },3000);
     toggleControls(false);
     hideElements();
-  
+
     $('#start-button').click(function(){
       morph("2D");
       $('main').toggle();
@@ -181,8 +180,9 @@ export default Ember.Component.extend({
             color:  Cesium.Color.RED,
             outlineColor: Cesium.Color.WHITE,
             outlineWidth: 2
-          },
-          label:  {
+          }
+          /*
+          ,label:  {
             text : entity.name,
             font : '14pt monospace',
             style: Cesium.LabelStyle.FILL_AND_OUTLINE,
@@ -190,6 +190,7 @@ export default Ember.Component.extend({
             verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
             pixelOffset : new Cesium.Cartesian2(0, 20)
           }
+          */
         });
       });
       return Pin;
