@@ -43,7 +43,7 @@ export default Ember.Component.extend({
           if (entityArray.length === 100) break;
           entityArray.push({
             name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
-            description: "Real description goes here", //detailInformation.abstract,
+            description: getDetailInformationOfSportsFacility(entity.s.value), //detailInformation.abstract,
             coords: {
               latitude: parseFloat(entity.lat.value),
               longitude: parseFloat(entity.long.value)
@@ -245,11 +245,19 @@ export default Ember.Component.extend({
 
       // Create sparql query used for fetching sports facilities around current location
       var detailInformationQuery =
-        `PREFIX dbpedia: <http://dbpedia.org/resource/>
+      /*  `PREFIX dbpedia: <http://dbpedia.org/resource/>
          SELECT * WHERE {
            dbpedia:${identifier} ?p ?o .
            filter ( isLiteral(?o) && langMatches(lang(?o),'en') )
          }`;
+         */
+          `prefix dbpedia: <http://dbpedia.org/resource/>
+           prefix dbpedia-owl: <http://dbpedia.org/ontology/>
+
+          select ?abstract where { 
+            dbpedia:Ernest_Hemingway dbpedia-owl:abstract ?abstract .
+            filter(langMatches(lang(?abstract),"de"))
+          }`;
 
       // Return promise which fetches sports facilities from dbpedia
       return dps
