@@ -18,6 +18,43 @@ export default Ember.Component.extend({
     var scene = viewer.scene;
     var camera = new Cesium.Camera(scene);
     var pinBuilder = new Cesium.PinBuilder();
+    var lastCameraPosition = new Cesium.Cartesian3();
+
+    viewer.camera.moveStart.addEventListener(function() {
+      // the camera stopped moving
+      lastCameraPosition = viewer.camera.position;
+    });
+    viewer.camera.moveEnd.addEventListener(function() {
+      // the camera stopped moving
+      console.log("Camera has been moved");
+      var position = {
+        longitude:  (viewer.camera.positionCartographic.longitude * 180 / Math.PI),
+        latitude:   (viewer.camera.positionCartographic.latitude * 180 / Math.PI),
+        height:   viewer.camera.positionCartographic.height
+      };
+      console.log("Cam-Position: " + position);
+      var entityArray = [];
+      // Get sports facilities as promise
+      var sportsFacilities = getSportsFacilities(position);
+      // Resolve promise
+      sportsFacilities.then(function (data){
+        var facilities = data.results.bindings;
+        for (let entity of facilities){
+          // Create entity and add it to array
+          entityArray.push({
+            name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
+            description: "Real description goes here", //detailInformation.abstract,
+            coords: {
+              latitude: parseFloat(entity.lat.value),
+              longitude: parseFloat(entity.long.value)
+            }
+          });
+          console.log(entity);
+        }
+        createMultiplePins(entityArray);
+      });
+
+    });
 
     //var clock = viewer.clock;
     var currentposition = {
@@ -210,8 +247,6 @@ export default Ember.Component.extend({
 
     function getSportsFacilities(currentPosition){
       var radius = 0.3;
-      var cameraPosition = camera.positionCartographic;
-      console.log("###Height of camera: " + cameraPosition.height);
       // Create sparql query used for fetching sports facilities around current location
       var sportsFacilitiesQuery =
         `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
