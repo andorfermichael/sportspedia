@@ -49,7 +49,6 @@ export default Ember.Component.extend({
               longitude: parseFloat(entity.long.value)
             }
           });
-          //console.log(entity);
         }
         createMultiplePins(entityArray);
       });
