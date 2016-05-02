@@ -250,12 +250,12 @@ export default Ember.Component.extend({
            filter ( isLiteral(?o) && langMatches(lang(?o),'en') )
          }`;
          */
-          `prefix dbpedia: <http://dbpedia.org/resource/>
-           prefix dbpedia-owl: <http://dbpedia.org/ontology/>
-
-          select ?abstract where { 
-            dbpedia:Eisarena_Salzburg dbpedia-owl:abstract ?abstract .
-            filter(langMatches(lang(?abstract),"de"))
+          `PREFIX  dbpedia: <http://dbpedia.org/resource/>
+           PREFIX  onto: <http://dbpedia.org/ontology/>
+           
+          SELECT ?abstract WHERE { 
+            dbpedia:Eisarena_Salzburg onto:abstract ?abstract .
+            filter(langMatches(lang(?abstract), 'en'))
           }`;
          
 
