@@ -15,10 +15,8 @@ export default Ember.Component.extend({
     };
     var viewer = new Cesium.Viewer('cesiumContainer',options);
     var scene = viewer.scene;
-    var camera = new Cesium.Camera(scene);
     var pinBuilder = new Cesium.PinBuilder();
     var lastCameraPosition = new Cesium.Cartesian3();
-    var entityArray = [];
 
     viewer.camera.moveStart.addEventListener(function() {
       // the camera stopped moving
@@ -33,8 +31,7 @@ export default Ember.Component.extend({
         height:   viewer.camera.positionCartographic.height
       };
       console.log("Cam-Position: " + position);
-      //var entityArray = [];
-      //console.log(entityArray);
+      var entityArray = [];
       // Get sports facilities as promise
       var sportsFacilities = getSportsFacilities(position);
       // Resolve promise
@@ -42,9 +39,10 @@ export default Ember.Component.extend({
         var facilities = data.results.bindings;
 
         for (let entity of facilities){
-          console.log(entity.thumbnail.value);
           // Create entity and add it to array
-          if (entityArray.length === 100) break;
+          if (entityArray.length === 100) {
+            break;
+          }
           entityArray.push({
             name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
             description: '<img src='+entity.thumbnail.value+'><p>'+ entity.abstract.value+'</p> ', //detailInformation.abstract,
@@ -57,11 +55,10 @@ export default Ember.Component.extend({
         }
         createMultiplePins(entityArray);
       });
-     
+
 
     });
 
-    //var clock = viewer.clock;
     var currentposition = {
         //Salzburg as default
         latitude: 47.8,
@@ -95,9 +92,6 @@ export default Ember.Component.extend({
     }
 
     function setView(target = currentposition, height = 3939999.0){
-      // to Salzburg
-      //viewer.camera.lookAt(center, new Cesium.Cartesian3(0.0, -4790000.0, 3930000.0));
-      //var center = Cesium.Cartesian3.fromDegrees(13.0333333, 47.8, 3930000.0);
       var center = Cesium.Cartesian3.fromDegrees(target.longitude, target.latitude, height);
       viewer.camera.flyTo({
         destination : center
@@ -130,12 +124,6 @@ export default Ember.Component.extend({
 
       setTimeout(function(){
         setView(currentposition,50000);
-
-        zoomToPins(
-          createMultiplePins(entityArray)
-        );
-
-        //toggleInfoBox();
       },4000);
 
     });
@@ -175,21 +163,19 @@ export default Ember.Component.extend({
         }
       return PinCollection;
     }
-
+    /*
     function zoomToPins(pinsarray){
       //Since some of the pins are created asynchronously, wait for them all to load before zooming
       Cesium.when.all(pinsarray, function(pins){
         viewer.flyTo(pins);
       });
     }
-
+    */
     function getSportsFacilities(currentPosition){
       var radius = 0.3;
       if (currentPosition.height !== 0){
         radius = currentPosition.height * (0,13 / 3939999);
       }
-      console.log("Height: " + currentPosition.height);
-      console.log("Radius: " + radius);
       // Create sparql query used for fetching sports facilities around current location
       var sportsFacilitiesQuery =
         `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
@@ -205,7 +191,6 @@ export default Ember.Component.extend({
                     ?lat > ${currentPosition.latitude} - ${radius} && ?lat < ${currentPosition.latitude} + ${radius}
                   )
          }`;
-        console.log("sports"+sportsFacilitiesQuery);
       // Return promise which fetches sports facilities from dbpedia
       return dps
         .client()
@@ -214,6 +199,6 @@ export default Ember.Component.extend({
         .catch(e => console.error(e));
 
     }
-    
+
   }
 });
