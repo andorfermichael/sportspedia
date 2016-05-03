@@ -11,8 +11,10 @@ export default Ember.Component.extend({
       sceneModePicker: false,
       timeline: false,
       navigationInstructionsInitiallyVisible: false,
-      baseLayerPicker : false
+      baseLayerPicker : false,
+      geocoder: false
     };
+
     var viewer = new Cesium.Viewer('cesiumContainer',options);
     var scene = viewer.scene;
     var pinBuilder = new Cesium.PinBuilder();
@@ -24,13 +26,11 @@ export default Ember.Component.extend({
     });
     viewer.camera.moveEnd.addEventListener(function() {
       // the camera stopped moving
-      console.log("Camera has been moved");
       var position = {
         longitude:  (viewer.camera.positionCartographic.longitude * 180 / Math.PI),
         latitude:   (viewer.camera.positionCartographic.latitude * 180 / Math.PI),
         height:   viewer.camera.positionCartographic.height
       };
-      console.log("Cam-Position: " + position);
       var entityArray = [];
       // Get sports facilities as promise
       var sportsFacilities = getSportsFacilities(position);
@@ -39,15 +39,14 @@ export default Ember.Component.extend({
         var facilities = data.results.bindings;
 
         for (let entity of facilities){
-          console.log(entity.location.value);
           // Create entity and add it to array
           if (entityArray.length === 100) {
             break;
           }
           entityArray.push({
-            name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
-            description: '<img src='+entity.thumbnail.value+'><p>'+ entity.abstract.value+'</p><p> Location: '+ entity.location.value.substr(entity.location.value.lastIndexOf('/') + 1)+'</p>', //detailInformation.abstract,
-           // thumbnail: entity.thumbnail.value,
+            name: entity.name.value,
+            description: generateDescription(entity),
+            // thumbnail: entity.thumbnail.value,
             coords: {
               latitude: parseFloat(entity.lat.value),
               longitude: parseFloat(entity.long.value)
@@ -129,9 +128,18 @@ export default Ember.Component.extend({
 
     });
 
+    function generateDescription(entity) {
+      //'<a href="' + imageurl + '" target="_blank"><img src="'+entity.thumbnail.value+'"></a><p>'+ entity.abstract.value+'</p><p> Location: '+ entity.location.value.substr(entity.location.value.lastIndexOf('/') + 1)+'</p>', //detailInformation.abstract,
+      var imageurl =  entity.thumbnail.value;
+      imageurl = entity.thumbnail.value.substring(0, imageurl.indexOf('?'));
+      var description = `
+      <center><a href="${imageurl}" target="_blank"><img src="${entity.thumbnail.value}"></a></center>
+          <p>${entity.abstract.value}</p>
+          <p>Location: ${entity.location.value.substr(entity.location.value.lastIndexOf('/') + 1)}</p>`;
+      return description;
+    }
     //PINS
     function createSinglePin(entity,pin_img = 'Assets/Textures/maki/marker-stroked.png'){
-
       var url = Cesium.buildModuleUrl(pin_img);
       var Pin = Cesium.when(pinBuilder.fromUrl(url, Cesium.Color.WHITE, 48), function(canvas) {
         return viewer.entities.add({
@@ -164,14 +172,7 @@ export default Ember.Component.extend({
         }
       return PinCollection;
     }
-    /*
-    function zoomToPins(pinsarray){
-      //Since some of the pins are created asynchronously, wait for them all to load before zooming
-      Cesium.when.all(pinsarray, function(pins){
-        viewer.flyTo(pins);
-      });
-    }
-    */
+
     function getSportsFacilities(currentPosition){
       var radius = 0.3;
       if (currentPosition.height !== 0){
@@ -187,6 +188,7 @@ export default Ember.Component.extend({
            ?s onto:thumbnail ?thumbnail .
            ?s dbo:abstract ?abstract .
            ?s dbo:location ?location .
+           ?s foaf:name ?name .
            filter(langMatches(lang(?abstract), 'en')) .
            ?s geo:lat ?lat .
            ?s geo:long ?long .
@@ -200,8 +202,6 @@ export default Ember.Component.extend({
         .query(sportsFacilitiesQuery)
         .asJson()
         .catch(e => console.error(e));
-
     }
-
   }
 });
