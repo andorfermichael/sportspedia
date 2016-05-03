@@ -42,12 +42,12 @@ export default Ember.Component.extend({
         var facilities = data.results.bindings;
 
         for (let entity of facilities){
-          console.log(entity.thumbnail.value);
+          console.log(entity.location.value);
           // Create entity and add it to array
           if (entityArray.length === 100) break;
           entityArray.push({
             name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
-            description: '<img src='+entity.thumbnail.value+'><p>'+ entity.abstract.value+'</p> ', //detailInformation.abstract,
+            description: '<img src='+entity.thumbnail.value+'><p>'+ entity.abstract.value+'</p><p> Location: '+ entity.location.value.substr(entity.location.value.lastIndexOf('/') + 1)+'</p>', //detailInformation.abstract,
            // thumbnail: entity.thumbnail.value,
             coords: {
               latitude: parseFloat(entity.lat.value),
@@ -194,10 +194,12 @@ export default Ember.Component.extend({
       var sportsFacilitiesQuery =
         `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
          PREFIX onto: <http://dbpedia.org/ontology/>
+         PREFIX dbpedia: <http://dbpedia.org/resource/>
          SELECT * WHERE {
            ?s a onto:SportFacility .
            ?s onto:thumbnail ?thumbnail .
            ?s dbo:abstract ?abstract .
+           ?s dbo:location ?location .
            filter(langMatches(lang(?abstract), 'en')) .
            ?s geo:lat ?lat .
            ?s geo:long ?long .
