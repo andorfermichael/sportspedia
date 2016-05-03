@@ -238,7 +238,6 @@ export default Ember.Component.extend({
         .asJson()
         .catch(e => console.error(e));
 
-
     }
 
     function getDetailInformationOfSportsFacility(uri){
