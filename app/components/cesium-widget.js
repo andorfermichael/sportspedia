@@ -34,18 +34,21 @@ export default Ember.Component.extend({
       };
       console.log("Cam-Position: " + position);
       //var entityArray = [];
-      console.log(entityArray);
+      //console.log(entityArray);
       // Get sports facilities as promise
       var sportsFacilities = getSportsFacilities(position);
       // Resolve promise
       sportsFacilities.then(function (data){
         var facilities = data.results.bindings;
+
         for (let entity of facilities){
+          console.log(entity.thumbnail.value);
           // Create entity and add it to array
           if (entityArray.length === 100) break;
           entityArray.push({
             name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
-            description: entity.abstract.value, //detailInformation.abstract,
+            description: '<img src='+entity.thumbnail.value+'><p>'+ entity.abstract.value+'</p> ', //detailInformation.abstract,
+           // thumbnail: entity.thumbnail.value,
             coords: {
               latitude: parseFloat(entity.lat.value),
               longitude: parseFloat(entity.long.value)
@@ -54,7 +57,7 @@ export default Ember.Component.extend({
         }
         createMultiplePins(entityArray);
       });
-      
+     
 
     });
 
@@ -77,19 +80,6 @@ export default Ember.Component.extend({
         scene.morphToColumbusView();
       }
     }
-
-    /*
-    function spinGlobe(dynamicRate){
-      var previousTime = Date.now();
-      viewer.clock.onTick.addEventListener(function() {
-        var spinRate = dynamicRate;
-        var currentTime = Date.now();
-        var delta = ( currentTime - previousTime ) / 1000;
-        previousTime = currentTime;
-        viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -spinRate * delta);
-      });
-    }
-  */
 
     function toggleControls(option){
       scene.screenSpaceCameraController.enableRotate = option;
@@ -152,25 +142,13 @@ export default Ember.Component.extend({
 
     //PINS
     function createSinglePin(entity,pin_img = 'Assets/Textures/maki/marker-stroked.png'){
-      /*
-      entity Element expected in JSON with following structure
-       var entity = {
-         name: "this is the stadium name",
-         desctiption: "this is the stadium description",
-         otherattributes: "and much more",
-         image: "external image url",
-         coords: {
-           longitude: 12.9922660309,
-           latitude: 47.8097550943
-         }
-       }
-      }
-       */
+
       var url = Cesium.buildModuleUrl(pin_img);
       var Pin = Cesium.when(pinBuilder.fromUrl(url, Cesium.Color.WHITE, 48), function(canvas) {
         return viewer.entities.add({
           name : entity.name,
           description : entity.description,
+         // thumbnail : entity.thumbnail,
           //47.8097550943 12.9922660309
           position : Cesium.Cartesian3.fromDegrees(entity.coords.longitude,entity.coords.latitude),
           billboard : {
@@ -183,16 +161,7 @@ export default Ember.Component.extend({
             outlineColor: Cesium.Color.WHITE,
             outlineWidth: 2
           }
-          /*
-          ,label:  {
-            text : entity.name,
-            font : '14pt monospace',
-            style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-            outlineWidth : 2,
-            verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
-            pixelOffset : new Cesium.Cartesian2(0, 20)
-          }
-          */
+
         });
       });
       return Pin;
@@ -227,6 +196,7 @@ export default Ember.Component.extend({
          PREFIX onto: <http://dbpedia.org/ontology/>
          SELECT * WHERE {
            ?s a onto:SportFacility .
+           ?s onto:thumbnail ?thumbnail .
            ?s dbo:abstract ?abstract .
            filter(langMatches(lang(?abstract), 'en')) .
            ?s geo:lat ?lat .
@@ -243,31 +213,6 @@ export default Ember.Component.extend({
         .asJson()
         .catch(e => console.error(e));
 
-    }
-
-    function getDetailInformationOfSportsFacility(uri){//entity.s.value
-      var identifier = uri.substr(uri.lastIndexOf('/') + 1);
-      // Create sparql query used for fetching sports facilities around current location
-      var detailInformationQuery =
-      /*  `PREFIX dbpedia: <http://dbpedia.org/resource/>
-         SELECT * WHERE {
-           dbpedia:${identifier} ?p ?o .
-           filter ( isLiteral(?o) && langMatches(lang(?o),'en') )
-         }`;
-         */
-          `PREFIX  dbpedia: <http://dbpedia.org/resource/>
-           PREFIX  onto: <http://dbpedia.org/ontology/>
-          SELECT ?abstract WHERE { 
-            dbpedia:$identifier onto:abstract ?abstract .
-            filter(langMatches(lang(?abstract), 'en'))
-          }`;
-
-      // Return promise which fetches sports facilities from dbpedia
-      return dps
-        .client()
-        .query(detailInformationQuery)
-        .asJson()
-        .catch(e => console.error(e));
     }
     
   }
