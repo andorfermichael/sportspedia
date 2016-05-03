@@ -18,6 +18,7 @@ export default Ember.Component.extend({
     var camera = new Cesium.Camera(scene);
     var pinBuilder = new Cesium.PinBuilder();
     var lastCameraPosition = new Cesium.Cartesian3();
+    var entityArray = [];
 
     viewer.camera.moveStart.addEventListener(function() {
       // the camera stopped moving
@@ -32,7 +33,8 @@ export default Ember.Component.extend({
         height:   viewer.camera.positionCartographic.height
       };
       console.log("Cam-Position: " + position);
-      var entityArray = [];
+      //var entityArray = [];
+      console.log(entityArray);
       // Get sports facilities as promise
       var sportsFacilities = getSportsFacilities(position);
       // Resolve promise
@@ -43,7 +45,7 @@ export default Ember.Component.extend({
           if (entityArray.length === 100) break;
           entityArray.push({
             name: entity.s.value.substr(entity.s.value.lastIndexOf('/') + 1),
-            description: getDetailInformationOfSportsFacility(entity.s.value), //detailInformation.abstract,
+            description: entity.abstract.value, //detailInformation.abstract,
             coords: {
               latitude: parseFloat(entity.lat.value),
               longitude: parseFloat(entity.long.value)
@@ -52,6 +54,7 @@ export default Ember.Component.extend({
         }
         createMultiplePins(entityArray);
       });
+      
 
     });
 
@@ -224,6 +227,8 @@ export default Ember.Component.extend({
          PREFIX onto: <http://dbpedia.org/ontology/>
          SELECT * WHERE {
            ?s a onto:SportFacility .
+           ?s dbo:abstract ?abstract .
+           filter(langMatches(lang(?abstract), 'en')) .
            ?s geo:lat ?lat .
            ?s geo:long ?long .
            FILTER ( ?long > ${currentPosition.longitude} - ${radius} && ?long < ${currentPosition.longitude} + ${radius} &&
@@ -239,9 +244,8 @@ export default Ember.Component.extend({
         .catch(e => console.error(e));
     }
 
-    function getDetailInformationOfSportsFacility(uri){
+    function getDetailInformationOfSportsFacility(uri){//entity.s.value
       var identifier = uri.substr(uri.lastIndexOf('/') + 1);
-
       // Create sparql query used for fetching sports facilities around current location
       var detailInformationQuery =
       /*  `PREFIX dbpedia: <http://dbpedia.org/resource/>
@@ -251,14 +255,12 @@ export default Ember.Component.extend({
          }`;
          */
           `PREFIX  dbpedia: <http://dbpedia.org/resource/>
-           PREFIX  onto: <http://dbpedia.org/ontology/>
            
           SELECT ?abstract WHERE { 
-            dbpedia:Eisarena_Salzburg onto:abstract ?abstract .
+            dbpedia:PalaCalafiore dbo:abstract ?abstract .
             filter(langMatches(lang(?abstract), 'en'))
           }`;
          
-
       // Return promise which fetches sports facilities from dbpedia
       return dps
         .client()
