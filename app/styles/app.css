@@ -157,9 +157,12 @@ content {
   font-size:  12pt;
 }
 
-.info-box {
-//background: hsla(0,0%,100%,.3);
-  padding:  10px;
+.cesium-infoBox {
+  height: 80%;
+}
+
+.cesium-infoBox-iframe {
+  height: 100%!important;
 }
 
 .clear { clear: both; }
@@ -210,16 +213,6 @@ content {
   -moz-animation: fadein 2s; /* Firefox */
   -webkit-animation: fadein 2s; /* Safari and Chrome */
   -o-animation: fadein 2s; /* Opera */
-}
-
-#cesiumInfoContainer {
-  position: fixed;
-  right: 10px;
-  width:  200px;
-  height: 400px;
-  border-radius:  5px;
-  background-color: white;
-  visibility: hidden;
 }
 
 @keyframes fadein {
