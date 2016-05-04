@@ -49,7 +49,7 @@ export default Ember.Component.extend({
 
         // Process each entity
         for (let entity of facilities){
-          // Maximum number of displayed entities is 100
+          // Set maximum number of simultaneously displayed entities
           if (entityArray.length === 100) {
             break;
           }
@@ -65,7 +65,7 @@ export default Ember.Component.extend({
           });
         }
 
-        // Render entities as pins on the map
+        // Create a pin collection
         createMultiplePins(entityArray);
       });
     });
