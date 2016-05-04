@@ -220,7 +220,7 @@ export default Ember.Component.extend({
         `PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
          PREFIX onto: <http://dbpedia.org/ontology/>
          PREFIX dbpedia: <http://dbpedia.org/resource/>
-         SELECT * WHERE {
+         SELECT ?thumbnail ?abstract ?location ?name ?lat ?long WHERE {
            ?s a onto:SportFacility .
            ?s onto:thumbnail ?thumbnail .
            ?s dbo:abstract ?abstract .
