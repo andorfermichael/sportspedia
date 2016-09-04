@@ -1,7 +1,6 @@
 # Sportspedia
 
-This README outlines the details of collaborating on this Ember application.
-Sportspedia displays sports facilities and information about them in a meaningful way.
+Sportspedia provides information about sport facilities in a meaningful way.
 
 ## Prerequisites
 
@@ -15,7 +14,7 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
-* `git clone <repository-url>` this repository
+* `git clone git@github.com:andorfermichael/sportspedia.git`
 * change into the new directory
 * `npm install`
 * `bower install`
@@ -57,7 +56,3 @@ Specify what it takes to deploy your app.
 - [Nico Deufemia](mailto:ndeufemia.mmt-b2014@fh-salzburg.ac.at)
 - [Vera Karl](mailto:vkarl.mmt-b2014@fh-salzburg.ac.at)
 - [Stefanie Habersatter](mailto:shabersatter.mmt-b2014@fh-salzburg.ac.at)
-
-# License
-
-[The MIT License](https://opensource.org/licenses/MIT)
