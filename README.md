@@ -1,6 +1,6 @@
 # Sportspedia
 
-Sportspedia provides information about sport facilities in a meaningful way.
+Discover sport facilities and retrieve information about them.
 
 ## Prerequisites
 
@@ -50,9 +50,13 @@ Specify what it takes to deploy your app.
   * [ember inspector for chrome](https://chrome.google.com/webstore/detail/ember-inspector/bmdblncegkenkacieihfhpjfppoconhi)
   * [ember inspector for firefox](https://addons.mozilla.org/en-US/firefox/addon/ember-inspector/)
 
-# Authors
+## Authors
 
 - [Michael Andorfer](mailto:mandorfer.mmt-b2014@fh-salzburg.ac.at)
 - [Nico Deufemia](mailto:ndeufemia.mmt-b2014@fh-salzburg.ac.at)
-- [Vera Karl](mailto:vkarl.mmt-b2014@fh-salzburg.ac.at)
 - [Stefanie Habersatter](mailto:shabersatter.mmt-b2014@fh-salzburg.ac.at)
+- [Vera Karl](mailto:vkarl.mmt-b2014@fh-salzburg.ac.at)
+
+## License
+
+[GNU General Public License, version 3 (GPL-3.0)](https://opensource.org/licenses/GPL-3.0)
